@@ -205,9 +205,10 @@ Returns a string suitable for use in buffer names."
 After adding the region, return focus to the parent frame and
 deactivate the mark."
   (interactive "r")
-  ;; Save the region information
+  ;; Save the region information and current buffer
   (let ((region-start start)
-        (region-end end))
+        (region-end end)
+        (source-buffer (current-buffer)))  
     ;; Immediately deactivate the mark
     (deactivate-mark)
     ;; Ensure the environment exists
@@ -252,7 +253,7 @@ If currently in parent frame, switch to floating window."
                      (buffer-live-p ni-original-buffer))
             ;; First switch to the parent frame, then find the window
             (select-frame-set-input-focus parent-frame)
-            (when-let ((win (get-buffer-window ni-original-buffer t)))
+            (when-let* ((win (get-buffer-window ni-original-buffer t)))
               (select-window win)))))
        ;; If in other windows, switch to the floating window
        ((frame-live-p ni-shared-frame)
