@@ -1,0 +1,79 @@
+* float-narrow-indirect
+
+A GNU Emacs package that provides floating window support for narrow-indirect operations. This package allows you to create floating windows containing narrowed regions of buffers, making it easier to view and compare different parts of a file.
+
+** Features
+
+[[./assets/float-narrow-indirect.gif]]
+
+- Create floating windows for narrowed regions
+- Aggregate multiple regions in a single floating frame
+- Easy navigation between main and floating windows
+- Customizable window appearance and behavior
+- No mode-line in floating windows for cleaner view
+- Automatic window balancing when adding new regions
+
+** Installation
+
+*** Manual Installation
+
+1. Download =float-narrow-indirect.el= to your local machine
+2. Add the following to your Emacs configuration:
+
+#+BEGIN_SRC elisp
+(add-to-list 'load-path "/path/to/float-narrow-indirect")
+(require 'float-narrow-indirect)
+#+END_SRC
+
+** Usage
+
+1. Select a region in any buffer
+2. =M-x ni-narrow-to-region-floating= to create a floating window with the selected region
+3. Use =M-x ni-toggle-focus= to switch between main and floating windows
+4. Use =M-x ni-clear-aggregation= to close all floating windows
+
+*** Recommended Key Bindings
+
+#+BEGIN_SRC elisp
+(global-set-key (kbd "C-c n f") 'ni-narrow-to-region-floating)
+(global-set-key (kbd "C-c n t") 'ni-toggle-focus)
+(global-set-key (kbd "C-c n c") 'ni-clear-aggregation)
+#+END_SRC
+
+** Customization
+
+You can customize the following variables:
+
+#+BEGIN_SRC elisp
+;; Size of floating windows (width . height) as ratio of parent frame
+(setq ni-floating-window-size '(0.3 . 0.5))
+
+;; Border color for floating frames
+(setq ni-floating-frame-border-color "gray50")
+
+;; Transparency for floating frames (active . inactive)
+(setq ni-floating-frame-transparency '(95 . 90))
+
+;; Buffer name prefix and separator
+(setq ni-buf-name-prefix "NI-")
+(setq ni-buf-name-separator "::")
+#+END_SRC
+
+** Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+
+** Acknowledgements
+
+This package is inspired by the [[https://www.emacswiki.org/emacs/NarrowIndirect][narrow-indirect]] package.
+
+** License
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+** Author
+
+Yibie
