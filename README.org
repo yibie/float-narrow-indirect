@@ -4,7 +4,7 @@ A GNU Emacs package that provides floating window support for narrow-indirect op
 
 ** Features
 
-[[./assets/float-narrow-indirect.gif]]
+[[./asset/float-narrow-indirect.gif]]
 
 - Create floating windows for narrowed regions
 - Aggregate multiple regions in a single floating frame
