@@ -68,7 +68,7 @@ Contributions are welcome! Feel free to:
 
 ** Acknowledgements
 
-This package is inspired by the [[https://www.emacswiki.org/emacs/NarrowIndirect][narrow-indirect]] package.
+This package is developed by [[https://github.com/yibie][Yibie]].
 
 ** License
 

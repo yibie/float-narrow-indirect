@@ -45,60 +45,60 @@
 
 ;;; Code:
 
-(defcustom ni-floating-window-size '(0.3 . 0.5)
+(defcustom fni-floating-window-size '(0.3 . 0.5)
   "Size of floating windows as ratio of parent frame.
 Width and height should be float numbers between 0 and 1."
   :type '(cons float float)
   :group 'Narrow-Indirect)
 
-(defcustom ni-floating-frame-border-color "gray50"
+(defcustom fni-floating-frame-border-color "gray50"
   "Border color for floating frames."
   :type 'string
   :group 'Narrow-Indirect)
 
-(defcustom ni-floating-frame-transparency '(95 . 90)
+(defcustom fni-floating-frame-transparency '(95 . 90)
   "Transparency for floating frames. (active . inactive)"
   :type '(cons integer integer)
   :group 'Narrow-Indirect)
 
-(defcustom ni-buf-name-prefix "NI-"
+(defcustom fni-buf-name-prefix "FNI-"
   "Prefix for names of indirect buffers."
   :type 'string
   :group 'Narrow-Indirect)
 
-(defcustom ni-buf-name-separator "::"
+(defcustom fni-buf-name-separator "::"
   "Separator between original buffer name and region content."
   :type 'string
   :group 'Narrow-Indirect)
 
-(defcustom ni-narrowed-buf-name-max 50
+(defcustom fni-narrowed-buf-name-max 50
   "Maximum length for generated buffer names."
   :type 'integer
   :group 'Narrow-Indirect)
 
-(defvar-local ni-original-buffer nil
+(defvar-local fni-original-buffer nil
   "Reference to the original buffer for indirect buffers.")
 
-(defvar-local ni-floating-window nil
+(defvar-local fni-floating-window nil
   "Reference to the floating window if this buffer is displayed in one.")
 
-(defvar ni-shared-frame nil
+(defvar fni-shared-frame nil
   "Shared floating frame for displaying aggregated regions.")
 
-(defvar ni-aggregated-regions nil
+(defvar fni-aggregated-regions nil
   "List of all aggregated regions.
 Each element is (buffer marker indirect-buffer start . end).")
 
-(defcustom ni-region-separator "\n\n;; ========== %s ==========\n\n"
+(defcustom fni-region-separator "\n\n;; ========== %s ==========\n\n"
   "Template for separator between regions.
 %s will be replaced with the region description."
   :type 'string
   :group 'Narrow-Indirect)
 
-(defvar ni-indirect-buffer-hook nil
+(defvar fni-indirect-buffer-hook nil
   "Hook run after creating an indirect buffer in narrow-indirect.")
 
-(defun ni-buffer-substring-collapsed-visible (start end)
+(defun fni-buffer-substring-collapsed-visible (start end)
   "Get a collapsed visible substring between START and END.
 Collapses multiple spaces into one, removes newlines, and truncates if too long.
 Returns a string suitable for use in buffer names."
@@ -113,13 +113,13 @@ Returns a string suitable for use in buffer names."
       str)))
 
 ;; Add a function to manage floating frames
-(defun ni--create-floating-frame ()
+(defun fni--create-floating-frame ()
   "Create a new child frame for displaying indirect buffers."
   (let* ((parent-width (frame-pixel-width))
          (parent-height (frame-pixel-height))
          ;; Calculate the actual width and height (using the ratio)
-         (width-ratio (car ni-floating-window-size))
-         (height-ratio (cdr ni-floating-window-size))
+         (width-ratio (car fni-floating-window-size))
+         (height-ratio (cdr fni-floating-window-size))
          (char-width (frame-char-width))
          (char-height (frame-char-height))
          ;; Calculate the number of characters instead of pixels
@@ -142,7 +142,7 @@ Returns a string suitable for use in buffer names."
                   (desktop-dont-save . t)
                   (internal-border-width . 2)
                   (background-color . ,(face-attribute 'default :background))
-                  (alpha . ,(car ni-floating-frame-transparency))
+                  (alpha . ,(car fni-floating-frame-transparency))
                   (tool-bar-lines . 0)
                   (menu-bar-lines . 0)
                   (mode-line-format . nil)  
@@ -150,38 +150,38 @@ Returns a string suitable for use in buffer names."
     
     (with-selected-frame frame
       (delete-other-windows)
-      (set-face-background 'internal-border ni-floating-frame-border-color))
+      (set-face-background 'internal-border fni-floating-frame-border-color))
     frame))
 
-(defun ni--ensure-aggregation-environment ()
+(defun fni--ensure-aggregation-environment ()
   "Ensure floating frame exists for displaying indirect buffers."
-  (unless (and ni-shared-frame (frame-live-p ni-shared-frame))
-    (setq ni-shared-frame (ni--create-floating-frame)))
-  ni-shared-frame)
+  (unless (and fni-shared-frame (frame-live-p fni-shared-frame))
+    (setq fni-shared-frame (fni--create-floating-frame)))
+  fni-shared-frame)
 
-(defun ni--add-region-to-aggregation (start end)
+(defun fni--add-region-to-aggregation (start end)
   "Add region between START and END to aggregation buffer"
   (let* ((source-buf (current-buffer))
          (source-mode major-mode)
-         (region-name (ni-buffer-substring-collapsed-visible start end))
-         (buf-name (concat ni-buf-name-prefix 
+         (region-name (fni-buffer-substring-collapsed-visible start end))
+         (buf-name (concat fni-buf-name-prefix 
                           (buffer-name) 
-                          ni-buf-name-separator 
+                          fni-buf-name-separator 
                           region-name))
-         (indirect-buf (clone-indirect-buffer buf-name nil)))    
+         (indirect-buf (clone-indirect-buffer buf nil)))    
     ;; Setting the indirect buffer
     (with-current-buffer indirect-buf
       (narrow-to-region start end)
-      (setq ni-original-buffer source-buf)
+      (setq fni-original-buffer source-buf)
       ;; Move to the beginning of the buffer
       (goto-char (point-min))
       ;; Run the hook
-      (run-hooks 'ni-indirect-buffer-hook))
+      (run-hooks 'fni-indirect-buffer-hook))
     ;; Handling the window in the aggregation frame
-    (with-selected-frame ni-shared-frame
+    (with-selected-frame fni-shared-frame
       ;; If it is the first region, use the existing window
-      (if (not ni-aggregated-regions)
-          (set-window-buffer (frame-selected-window ni-shared-frame) indirect-buf)
+      (if (not fni-aggregated-regions)
+          (set-window-buffer (frame-selected-window fni-shared-frame) indirect-buf)
         ;; Otherwise, create a new window
         (let ((window (split-window-below)))
           (set-window-buffer window indirect-buf)))
@@ -195,12 +195,12 @@ Returns a string suitable for use in buffer names."
                       region-name))))
     ;; Adding to the regions list
     (push (list source-buf indirect-buf start end) 
-          ni-aggregated-regions)
+          fni-aggregated-regions)
     
     indirect-buf))
 
 ;;;###autoload
-(defun ni-narrow-to-region-floating (start end)
+(defun fni-narrow-to-region-floating (start end)
   "Add region between START and END to floating aggregation buffer.
 After adding the region, return focus to the parent frame and
 deactivate the mark."
@@ -212,74 +212,74 @@ deactivate the mark."
     ;; Immediately deactivate the mark
     (deactivate-mark)
     ;; Ensure the environment exists
-    (ni--ensure-aggregation-environment)
+    (fni--ensure-aggregation-environment)
     ;; Use the saved region information to add the region
-    (ni--add-region-to-aggregation region-start region-end)
+    (fni--add-region-to-aggregation region-start region-end)
     ;; Use ni-toggle-focus to return to the parent window
-    (select-frame-set-input-focus (frame-parent ni-shared-frame))
+    (select-frame-set-input-focus (frame-parent fni-shared-frame))
     (switch-to-buffer source-buffer)))
 
 ;;;###autoload
-(defun ni-narrow-to-region-replace (start end)
+(defun fni-narrow-to-region-replace (start end)
   "Replace current window content with narrowed region between START and END."
   (interactive "r")
   (let* ((here (point))
-         (buf (ni-buffer-substring-collapsed-visible start end))
-         (buf (concat ni-buf-name-prefix (buffer-name) ni-buf-name-separator buf))
-         (buf (substring buf 0 (min (length buf) ni-narrowed-buf-name-max)))
+         (buf (fni-buffer-substring-collapsed-visible start end))
+         (buf (concat fni-buf-name-prefix (buffer-name) fni-buf-name-separator buf))
+         (buf (substring buf 0 (min (length buf) fni-narrowed-buf-name-max)))
          (indirect-buf (clone-indirect-buffer buf nil)))
     (with-current-buffer indirect-buf
       (narrow-to-region start end)
       (goto-char here)
-      (setq ni-original-buffer (current-buffer)))
+      (setq fni-original-buffer (current-buffer)))
     (switch-to-buffer indirect-buf)))
 
 ;;;###autoload
-(defun ni-toggle-focus ()
+(defun fni-toggle-focus ()
   "Toggle focus between main window and floating window.
 If currently in floating window, switch to parent frame.
 If currently in parent frame, switch to floating window."
   (interactive)
-  (when ni-shared-frame
+  (when fni-shared-frame
     (let ((current-frame (selected-frame))
-          (parent-frame (frame-parent ni-shared-frame)))
+          (parent-frame (frame-parent fni-shared-frame)))
       (cond
        ;; If in the floating window, switch to the parent window
-       ((eq current-frame ni-shared-frame)
+       ((eq current-frame fni-shared-frame)
         (when parent-frame
           (select-frame-set-input-focus parent-frame)
           ;; Ensure focus returns to the original buffer
-          (when (and ni-original-buffer 
-                     (buffer-live-p ni-original-buffer))
+          (when (and fni-original-buffer 
+                     (buffer-live-p fni-original-buffer))
             ;; First switch to the parent frame, then find the window
             (select-frame-set-input-focus parent-frame)
-            (when-let* ((win (get-buffer-window ni-original-buffer t)))
+            (when-let* ((win (get-buffer-window fni-original-buffer t)))
               (select-window win)))))
        ;; If in other windows, switch to the floating window
-       ((frame-live-p ni-shared-frame)
-        (select-frame-set-input-focus ni-shared-frame))))))
+       ((frame-live-p fni-shared-frame)
+        (select-frame-set-input-focus fni-shared-frame))))))
 
-(defun ni-clear-aggregation ()
+(defun fni-clear-aggregation ()
   "Clear all aggregated regions and reset the environment."
   (interactive)
-  (when ni-aggregated-regions
-    (dolist (region ni-aggregated-regions)
+  (when fni-aggregated-regions
+    (dolist (region fni-aggregated-regions)
       (let ((indirect-buf (nth 1 region)))
         (when (buffer-live-p indirect-buf)
           (kill-buffer indirect-buf))))
-    (setq ni-aggregated-regions nil))
+    (setq fni-aggregated-regions nil))
   
-  (when (frame-live-p ni-shared-frame)
-    (delete-frame ni-shared-frame)
-    (setq ni-shared-frame nil)))
+  (when (frame-live-p fni-shared-frame)
+    (delete-frame fni-shared-frame)
+    (setq fni-shared-frame nil)))
 
-(define-minor-mode narrow-indirect-mode
-  "Minor mode for narrow-indirect functionality with floating windows support."
-  :lighter " NI"
+(define-minor-mode float-narrow-indirect-mode
+  "Minor mode for float-narrow-indirect functionality with floating windows support."
+  :lighter " FNI"
   :global t)
 
 ;; Add a default hook to close the mode-line
-(add-hook 'ni-indirect-buffer-hook
+(add-hook 'fni-indirect-buffer-hook
           (lambda () 
             (setq mode-line-format nil)))
 
