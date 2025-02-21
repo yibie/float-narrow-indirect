@@ -4,14 +4,22 @@ A GNU Emacs package that provides floating window support for narrow-indirect op
 
 ** Features
 
+When working with multiple parts of a file in Emacs, traditional split-window layouts can make your screen cluttered. float-narrow-indirect offers an elegant solution - it allows you to "extract" selected text regions into independent floating windows.
+
 [[./asset/float-narrow-indirect.gif]]
 
-- Create floating windows for narrowed regions
-- Aggregate multiple regions in a single floating frame
-- Easy navigation between main and floating windows
-- Customizable window appearance and behavior
-- No mode-line in floating windows for cleaner view
-- Automatic window balancing when adding new regions
+- 🎯 Focus: Float important code snippets in separate windows to reduce visual distractions
+- 🔄 Flexible: Open multiple floating windows simultaneously for easy content comparison
+- 🎨 Clean: Floating windows without mode-line for a cleaner reading experience
+- ⚡ Quick: One-key focus toggle between main and floating windows
+- 🎛️ Customizable: Adjust window size, transparency, border color and more to your preference
+
+** Common Use Cases
+
+- Keep important paragraphs in floating windows for quick reference while reading long documents
+- View multiple related function implementations simultaneously during code refactoring
+- Compare differences between old and new versions while writing documentation
+- Keep critical code segments in view while debugging
 
 ** Installation
 
