@@ -28,16 +28,16 @@ A GNU Emacs package that provides floating window support for narrow-indirect op
 ** Usage
 
 1. Select a region in any buffer
-2. =M-x ni-narrow-to-region-floating= to create a floating window with the selected region
-3. Use =M-x ni-toggle-focus= to switch between main and floating windows
-4. Use =M-x ni-clear-aggregation= to close all floating windows
+2. =M-x fni-narrow-to-region-floating= to create a floating window with the selected region
+3. Use =M-x fni-toggle-focus= to switch between main and floating windows
+4. Use =M-x fni-clear-aggregation= to close all floating windows
 
 *** Recommended Key Bindings
 
 #+BEGIN_SRC elisp
-(global-set-key (kbd "C-c n f") 'ni-narrow-to-region-floating)
-(global-set-key (kbd "C-c n t") 'ni-toggle-focus)
-(global-set-key (kbd "C-c n c") 'ni-clear-aggregation)
+(global-set-key (kbd "C-c n f") 'fni-narrow-to-region-floating)
+(global-set-key (kbd "C-c n t") 'fni-toggle-focus)
+(global-set-key (kbd "C-c n c") 'fni-clear-aggregation)
 #+END_SRC
 
 ** Customization
@@ -68,7 +68,7 @@ Contributions are welcome! Feel free to:
 
 ** Acknowledgements
 
-This package is developed by [[https://github.com/yibie][Yibie]].
+This package is developed by the [[https://www.emacswiki.org/emacs/NarrowIndirect][narrow-indirect]] package.
 
 ** License
 
