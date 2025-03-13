@@ -61,7 +61,7 @@ Width and height should be float numbers between 0 and 1."
   :type '(cons integer integer)
   :group 'Narrow-Indirect)
 
-(defcustom fni-buf-name-prefix "FNI-"
+(defcustom fni-buf-name-prefix "fni-"
   "Prefix for names of indirect buffers."
   :type 'string
   :group 'Narrow-Indirect)
@@ -168,7 +168,7 @@ Returns a string suitable for use in buffer names."
                           (buffer-name) 
                           fni-buf-name-separator 
                           region-name))
-         (indirect-buf (clone-indirect-buffer buf nil)))    
+         (indirect-buf (clone-indirect-buffer buf-name nil)))    
     ;; Setting the indirect buffer
     (with-current-buffer indirect-buf
       (narrow-to-region start end)
@@ -215,7 +215,7 @@ deactivate the mark."
     (fni--ensure-aggregation-environment)
     ;; Use the saved region information to add the region
     (fni--add-region-to-aggregation region-start region-end)
-    ;; Use ni-toggle-focus to return to the parent window
+    ;; Use fni-toggle-focus to return to the parent window
     (select-frame-set-input-focus (frame-parent fni-shared-frame))
     (switch-to-buffer source-buffer)))
 
@@ -273,9 +273,9 @@ If currently in parent frame, switch to floating window."
     (delete-frame fni-shared-frame)
     (setq fni-shared-frame nil)))
 
-(define-minor-mode float-narrow-indirect-mode
-  "Minor mode for float-narrow-indirect functionality with floating windows support."
-  :lighter " FNI"
+(define-minor-mode narrow-indirect-mode
+  "Minor mode for narrow-indirect functionality with floating windows support."
+  :lighter " fni"
   :global t)
 
 ;; Add a default hook to close the mode-line
